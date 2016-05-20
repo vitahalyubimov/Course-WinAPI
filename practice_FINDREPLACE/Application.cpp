@@ -52,7 +52,7 @@ VOID Application::CheckOpeningCopy(HWND hwnd)
 	{
 		std::wstringstream ss;
 		ss << NAMEPLEER << TEXT(" уже запущен");
-		MessageBox(hwnd, ss.str().c_str(), TEXT("Information"), MB_ICONEXCLAMATION);
+		MessageBox(hwnd, ss.str().c_str(), TEXT("Warning"), MB_ICONEXCLAMATION);
 		EndDialog(hwnd, 0);
 	}
 }

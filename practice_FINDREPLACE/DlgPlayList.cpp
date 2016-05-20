@@ -127,7 +127,7 @@ BOOL DlgPlayList::Cls_OnInitDialog(HWND hwnd, HWND hwndFocus, LPARAM lParam)
 	AppendMenu(hContextMenu, MF_STRING, IDC_DELETE, TEXT("&Delete"));
 	AppendMenu(hContextMenu, MF_STRING, IDC_CLEANPLAYLIST, TEXT("D&elete all"));
 	AppendMenu(hContextMenu, MF_SEPARATOR, 0, 0);
-	HMENU hColor = CreatePopupMenu();
+	hColor = CreatePopupMenu();
 	AppendMenu(hContextMenu, MF_POPUP | MF_STRING, (INT_PTR)hColor, TEXT("&Color text"));
 	AppendMenu(hColor, MF_STRING, IDC_COLORTEXTRED, TEXT("&Red"));
 	AppendMenu(hColor, MF_STRING, IDC_COLORTEXTGREEN, TEXT("&Green"));
@@ -287,21 +287,20 @@ VOID DlgPlayList::changeColorTextInPlayList(HWND hWnd, INT r, INT g, INT b)
 /*
 	Скрытие всех галочек в контекстном меню выбора цвета
 */
-VOID DlgPlayList::UncheckedAllItemContextMenu(HMENU hMenu)
+VOID DlgPlayList::UncheckedAllItemContextMenu()
 {
-	CheckMenuItem(hMenu, IDC_COLORTEXTRED, MF_BYCOMMAND | MF_UNCHECKED);
-	CheckMenuItem(hMenu, IDC_COLORTEXTBLUE, MF_BYCOMMAND | MF_UNCHECKED);
-	CheckMenuItem(hMenu, IDC_COLORTEXTGREEN, MF_BYCOMMAND | MF_UNCHECKED);
-	CheckMenuItem(hMenu, IDC_COLORTURQUOISE, MF_BYCOMMAND | MF_UNCHECKED);
-	CheckMenuItem(hMenu, IDC_COLORWHITE, MF_BYCOMMAND | MF_UNCHECKED);
-	CheckMenuItem(hMenu, IDC_COLORYELLOW, MF_BYCOMMAND | MF_UNCHECKED);
+	CheckMenuItem(hColor, IDC_COLORTEXTRED, MF_BYCOMMAND | MF_UNCHECKED);
+	CheckMenuItem(hColor, IDC_COLORTEXTBLUE, MF_BYCOMMAND | MF_UNCHECKED);
+	CheckMenuItem(hColor, IDC_COLORTEXTGREEN, MF_BYCOMMAND | MF_UNCHECKED);
+	CheckMenuItem(hColor, IDC_COLORTURQUOISE, MF_BYCOMMAND | MF_UNCHECKED);
+	CheckMenuItem(hColor, IDC_COLORWHITE, MF_BYCOMMAND | MF_UNCHECKED);
+	CheckMenuItem(hColor, IDC_COLORYELLOW, MF_BYCOMMAND | MF_UNCHECKED);
 }
 /*
 	Диалоговая процедура
 */
 INT_PTR CALLBACK DlgPlayList::ProcPlayList(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-	static HMENU hColorText = GetSubMenu(_this->hContextMenu, 3);
 	switch (uMsg)
 	{
 		HANDLE_MSG(hWnd, WM_CONTEXTMENU, _this->Cls_OnContextMenu);
@@ -329,43 +328,43 @@ INT_PTR CALLBACK DlgPlayList::ProcPlayList(HWND hWnd, UINT uMsg, WPARAM wParam, 
 				}
 				case IDC_COLORTEXTRED:
 				{
-					_this->UncheckedAllItemContextMenu(hColorText);
-					CheckMenuItem(hColorText, IDC_COLORTEXTRED, MF_BYCOMMAND | MF_CHECKED);
+					_this->UncheckedAllItemContextMenu();
+					CheckMenuItem(_this->hColor, IDC_COLORTEXTRED, MF_BYCOMMAND | MF_CHECKED);
 					_this->changeColorTextInPlayList(hWnd, 255, 0, 0);
 					break;
 				}
 				case IDC_COLORTEXTGREEN:
 				{
-					_this->UncheckedAllItemContextMenu(hColorText);
-					CheckMenuItem(hColorText, IDC_COLORTEXTGREEN, MF_BYCOMMAND | MF_CHECKED);
+					_this->UncheckedAllItemContextMenu();
+					CheckMenuItem(_this->hColor, IDC_COLORTEXTGREEN, MF_BYCOMMAND | MF_CHECKED);
 					_this->changeColorTextInPlayList(hWnd, 0, 255, 0);
 					break;
 				}
 				case IDC_COLORTEXTBLUE:
 				{
-					_this->UncheckedAllItemContextMenu(hColorText);
-					CheckMenuItem(hColorText, IDC_COLORTEXTBLUE, MF_BYCOMMAND | MF_CHECKED);
+					_this->UncheckedAllItemContextMenu();
+					CheckMenuItem(_this->hColor, IDC_COLORTEXTBLUE, MF_BYCOMMAND | MF_CHECKED);
 					_this->changeColorTextInPlayList(hWnd, 0, 0, 255);
 					break;
 				}
 				case IDC_COLORWHITE:
 				{
-					_this->UncheckedAllItemContextMenu(hColorText);
-					CheckMenuItem(hColorText, IDC_COLORWHITE, MF_BYCOMMAND | MF_CHECKED);
+					_this->UncheckedAllItemContextMenu();
+					CheckMenuItem(_this->hColor, IDC_COLORWHITE, MF_BYCOMMAND | MF_CHECKED);
 					_this->changeColorTextInPlayList(hWnd, 255, 255, 255);
 					break;
 				}
 				case IDC_COLORYELLOW:
 				{
-					_this->UncheckedAllItemContextMenu(hColorText);
-					CheckMenuItem(hColorText, IDC_COLORYELLOW, MF_BYCOMMAND | MF_CHECKED);
+					_this->UncheckedAllItemContextMenu();
+					CheckMenuItem(_this->hColor, IDC_COLORYELLOW, MF_BYCOMMAND | MF_CHECKED);
 					_this->changeColorTextInPlayList(hWnd, 255, 255, 0);
 					break;
 				}
 				case IDC_COLORTURQUOISE:
 				{
-					_this->UncheckedAllItemContextMenu(hColorText);
-					CheckMenuItem(hColorText, IDC_COLORTURQUOISE, MF_BYCOMMAND | MF_CHECKED);
+					_this->UncheckedAllItemContextMenu();
+					CheckMenuItem(_this->hColor, IDC_COLORTURQUOISE, MF_BYCOMMAND | MF_CHECKED);
 					_this->changeColorTextInPlayList(hWnd, 0, 245, 255);
 					break;
 				}

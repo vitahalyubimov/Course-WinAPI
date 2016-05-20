@@ -11,6 +11,7 @@ private:
 	HWND hPlayList;						//Дескриптор плейлиста
 	std::vector<infoSong> songs;		//Вектор всех песен в плейлисте
 	INT red, green, blue;				//Цвет текста в плейлисте
+	HMENU hColor;
 public:
 	static DlgPlayList* _this;			//Собственный указатель
 
@@ -29,7 +30,7 @@ public:
 	VOID changeColorTextInPlayList(HWND hWnd, INT r, INT g, INT b);										//Изменение цвета текста в плейлисте
 	HBRUSH OnListColor(HWND hwnd, HDC hdc, HWND hwndChild, INT type);									//Цвет фона ListBox
 	HBRUSH OnBckgColor(HWND hwnd, HDC hdc, HWND hwndChild, INT type);									//Фон
-	VOID UncheckedAllItemContextMenu(HMENU hMenu);
+	VOID UncheckedAllItemContextMenu();
 	VOID SavePlayList();
 	VOID LoadPlayList();
 	friend class Application;
