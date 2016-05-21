@@ -1,11 +1,13 @@
 #pragma once
 #include "include.h"
+
+
 class DlgEqualizer
 {
 private:
-	HWND hDlg;				//ƒескриптор окна
+	HWND hDlg;								//ƒескриптор окна
 	BASS_DX8_PARAMEQ dx8_fx0_parameq;		//структура определ€юща€ данные дл€ эквалайзера
-	HFX fx[10];										
+	HFX fx[10];								//каналы изменени€ звучани€			
 	HWND hSlidersEqualizer[10];			//массив дескрипторов слайдеров
 public:
 	static DlgEqualizer* _this;			//собственный указатель

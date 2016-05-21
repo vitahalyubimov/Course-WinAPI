@@ -156,7 +156,6 @@ BOOL DlgEqualizer::Cls_OnInitDialog(HWND hwnd, HWND hwndFocus, LPARAM lParam)
 HBRUSH OnColorDlg(HWND hwnd, HDC hdc, HWND hwndChild, INT type)
 {
 	static HBRUSH brush = CreatePatternBrush(LoadBitmap(GetModuleHandle(0), MAKEINTRESOURCE(IDB_BITMAPABSTRACTION)));
-	//static HBRUSH brush = CreateSolidBrush(RGB(0, 0, 0));
 	return brush;
 }
 /*
@@ -199,6 +198,9 @@ INT_PTR WINAPI DlgEqualizer::DlgProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM
 		HANDLE_MSG(hWnd, WM_VSCROLL, _this->Cls_OnVScroll);				
 		case WM_LBUTTONDOWN:
 		{
+			/*
+				передвижение окна
+			*/
 			RECT wnd;
 			GetWindowRect(hWnd, &wnd);
 			POINT pos;

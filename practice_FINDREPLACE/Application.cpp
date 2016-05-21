@@ -159,7 +159,7 @@ BOOL Application::openFile_LoadMusic(HWND hWnd)
 	return FALSE;
 }
 /*
-	Processing WM_INITDIALOG
+	WM_INITDIALOG
 */
 BOOL Application::Cls_OnInitDialog(HWND hwnd, HWND hwndFocus, LPARAM lParam)
 {
@@ -224,6 +224,11 @@ BOOL Application::Cls_OnInitDialog(HWND hwnd, HWND hwndFocus, LPARAM lParam)
 	/*
 		Создание контекстного меню
 	*/
+	hContextMenu = CreatePopupMenu();
+	hColor = CreatePopupMenu();
+	hColorContour = CreatePopupMenu();
+	hColorFill = CreatePopupMenu();
+	hTranperency = CreatePopupMenu();
 	AppendMenu(hContextMenu, MF_STRING | MF_POPUP, (INT_PTR)hColor, TEXT("Color spectrum"));
 
 	AppendMenu(hColor, MF_STRING | MF_POPUP, (INT_PTR)hColorContour, TEXT("Color contour"));
@@ -271,7 +276,7 @@ BOOL Application::Cls_OnInitDialog(HWND hwnd, HWND hwndFocus, LPARAM lParam)
 	return TRUE;
 }
 /*
-	Processing WM_HSCROLL
+	WM_HSCROLL
 */
 VOID Application::Cls_OnHScroll(HWND hwnd, HWND hwndCtl, UINT code, INT pos)
 {
@@ -316,7 +321,7 @@ VOID Application::Cls_OnHScroll(HWND hwnd, HWND hwndCtl, UINT code, INT pos)
 	}
 }
 /*
-	Processing WM_COMMAND
+	WM_COMMAND
 */
 VOID Application::Cls_OnCommand(HWND hwnd, INT id, HWND hwndCtl, UINT codeNotify)
 {
@@ -1005,6 +1010,7 @@ VOID Application::UncheckedAllMenuItemContour()
 	CheckMenuItem(hColorContour, COLOR_CONTOUR_BLUE, MF_BYCOMMAND | MF_UNCHECKED);
 	CheckMenuItem(hColorContour, COLOR_CONTOUR_GREEN, MF_BYCOMMAND | MF_UNCHECKED);
 	CheckMenuItem(hColorContour, COLOR_CONTOUR_WHITE, MF_BYCOMMAND | MF_UNCHECKED);
+	InvalidateRect(GetParent(hTBPlayingSong), &spectrRECT, TRUE);
 }
 	//Заливка
 VOID Application::UncheckedAllMenuItemFill()
@@ -1014,6 +1020,7 @@ VOID Application::UncheckedAllMenuItemFill()
 	CheckMenuItem(hColorFill, COLOR_FILL_BLUE, MF_BYCOMMAND | MF_UNCHECKED);
 	CheckMenuItem(hColorFill, COLOR_FILL_GREEN, MF_BYCOMMAND | MF_UNCHECKED);
 	CheckMenuItem(hColorFill, COLOR_FILL_WHITE, MF_BYCOMMAND | MF_UNCHECKED);
+	InvalidateRect(GetParent(hTBPlayingSong), &spectrRECT, TRUE);
 }
 	//Прозрачность
 VOID Application::UncheckedAllMenuItemTransperency()

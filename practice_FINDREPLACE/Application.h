@@ -24,11 +24,11 @@ private:
 	/*
 		Контекстное меню
 	*/
-	HMENU hContextMenu = CreatePopupMenu();
-	HMENU hColor = CreatePopupMenu();
-	HMENU hColorContour = CreatePopupMenu();
-	HMENU hColorFill = CreatePopupMenu();
-	HMENU hTranperency = CreatePopupMenu();
+	HMENU hContextMenu;
+	HMENU hColor;
+	HMENU hColorContour;
+	HMENU hColorFill;
+	HMENU hTranperency;
 public:
 	Application(VOID);								//конструктор по умолчанию
 	~Application();									//деструктор

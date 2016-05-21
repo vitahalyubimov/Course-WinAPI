@@ -55,7 +55,9 @@ INT_PTR CALLBACK DlgPlayList::DlgProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARA
 			GetCursorPos(&pos);
 			if (pos.x >= wnd.left && pos.x <= wnd.right &&
 				pos.y >= wnd.top && pos.y <= wnd.top + 30)
+			{
 				SendMessage(hWnd, WM_NCLBUTTONDOWN, HTCAPTION, 0);
+			}
 			break;
 		}
 		case WM_CLOSE:
@@ -65,6 +67,7 @@ INT_PTR CALLBACK DlgPlayList::DlgProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARA
 			isCheck = Button_GetCheck(hCheck);
 			if (isCheck == TRUE)
 				SendMessage(hCheck, BM_SETCHECK, BST_UNCHECKED, 0);
+
 			EndDialog(hWnd, 0);
 			break;
 		}
@@ -84,17 +87,17 @@ VOID DlgPlayList::Cls_OnCommand(HWND hwnd, INT id, HWND hwndCtl, UINT codeNotify
 		{
 			if (codeNotify == LBN_DBLCLK)
 			{
-				INT idx = SendMessage(hPlayList, LB_GETCURSEL, 0, 0);
-				Application::_this->hStream = songs[idx].hStream;
-				Application::_this->secPlaying = 0;
-				Application::_this->setRangeTrackBarPlaySong(Application::_this->hStream);
-				DlgEqualizer::_this->SetFX(Application::_this->hStream);
-				BASS_Stop();
-				BASS_ChannelStop(Application::_this->hStream);
-				BASS_Start();
-				BASS_ChannelPlay(Application::_this->hStream, TRUE);
-				SetTimer(GetParent(hDlg), Application::_this->id_timer, 1000, 0);
-				SetTimer(GetParent(hDlg), Application::_this->idTimerBySpectr, 100, 0);
+				INT idx = SendMessage(hPlayList, LB_GETCURSEL, 0, 0);			//получение индекса выделенного элемента
+				Application::_this->hStream = songs[idx].hStream;				//присвоение основному потоку поток выбранного элемента
+				Application::_this->secPlaying = 0;								//обнуление секунд
+				Application::_this->setRangeTrackBarPlaySong(Application::_this->hStream);		//установка диапазона дл€ полосы прокурутки
+				DlgEqualizer::_this->SetFX(Application::_this->hStream);		//установка настроек дл€ каналов регул€ции звучани€
+				BASS_Stop();			//остановка потока
+				BASS_ChannelStop(Application::_this->hStream);		//остановка канала
+				BASS_Start();			//запуск потока
+				BASS_ChannelPlay(Application::_this->hStream, TRUE);	//запуск канала
+				SetTimer(GetParent(hDlg), Application::_this->id_timer, 1000, 0);			//запуск таймера дл€ времени проигрывани€
+				SetTimer(GetParent(hDlg), Application::_this->idTimerBySpectr, 100, 0);		//запуск таймера дл€ спектра
 			}
 			break;
 		}
@@ -135,7 +138,7 @@ BOOL DlgPlayList::Cls_OnInitDialog(HWND hwnd, HWND hwndFocus, LPARAM lParam)
 	AppendMenu(hColor, MF_STRING, IDC_COLORWHITE, TEXT("&White"));
 	AppendMenu(hColor, MF_STRING, IDC_COLORYELLOW, TEXT("&Yellow"));
 	AppendMenu(hColor, MF_STRING, IDC_COLORTURQUOISE, TEXT("&Turquoise"));
-	//установка галочку на изначальный цвет
+	//установка галочки на изначальный цвет
 	CheckMenuItem(hColor, IDC_COLORTEXTGREEN, MF_BYCOMMAND | MF_CHECKED);
 	return TRUE;
 }
@@ -156,9 +159,9 @@ VOID DlgPlayList::showPlayList(INT isShow)
 */
 VOID DlgPlayList::addSongToPlayList(HSTREAM stream, TCHAR* path)
 {
-	TAG_ID3* id3 = (TAG_ID3*)BASS_ChannelGetTags(stream, BASS_TAG_ID3);
+	TAG_ID3* id3 = (TAG_ID3*)BASS_ChannelGetTags(stream, BASS_TAG_ID3);		//получение данных о песне
 	std::wstringstream infoAboutTheSong;									//Ѕуфер строки (Ќазвание песни + »сполнитель + врем€)
-	infoSong info;
+	infoSong info;					
 	QWORD lengthSong = BASS_ChannelGetLength(stream, BASS_POS_BYTE);		//длина песни в байтах
 	INT seconds = BASS_ChannelBytes2Seconds(stream, lengthSong);			//длина песни в секундах
 	INT min = seconds / 60;													//ќпределение минут

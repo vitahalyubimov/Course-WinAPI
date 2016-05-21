@@ -31,7 +31,5 @@ public:
 	HBRUSH OnListColor(HWND hwnd, HDC hdc, HWND hwndChild, INT type);									//Цвет фона ListBox
 	HBRUSH OnBckgColor(HWND hwnd, HDC hdc, HWND hwndChild, INT type);									//Фон
 	VOID UncheckedAllItemContextMenu();
-	VOID SavePlayList();
-	VOID LoadPlayList();
 	friend class Application;
 };
