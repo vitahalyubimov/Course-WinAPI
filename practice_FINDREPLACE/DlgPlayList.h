@@ -11,12 +11,12 @@ private:
 	HWND hPlayList;						//Дескриптор плейлиста
 	std::vector<infoSong> songs;		//Вектор всех песен в плейлисте
 	INT red, green, blue;				//Цвет текста в плейлисте
-	HMENU hColor;
+	HMENU hColor;						//контекстное меню
 public:
 	static DlgPlayList* _this;			//Собственный указатель
 
-	DlgPlayList();					//Конструктор
-	~DlgPlayList();					//Деструктор
+	DlgPlayList();						//Конструктор
+	~DlgPlayList();						//Деструктор
 
 
 	static INT_PTR CALLBACK DlgProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);				//Диалоговая процедура
@@ -30,6 +30,6 @@ public:
 	VOID changeColorTextInPlayList(HWND hWnd, INT r, INT g, INT b);										//Изменение цвета текста в плейлисте
 	HBRUSH OnListColor(HWND hwnd, HDC hdc, HWND hwndChild, INT type);									//Цвет фона ListBox
 	HBRUSH OnBckgColor(HWND hwnd, HDC hdc, HWND hwndChild, INT type);									//Фон
-	VOID UncheckedAllItemContextMenu();
+	VOID UncheckedAllItemContextMenu();																	//снятие всех галочек с элементов контекстного меню
 	friend class Application;
 };

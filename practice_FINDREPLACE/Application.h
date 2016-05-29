@@ -21,6 +21,7 @@ private:
 	HSTREAM hStream;								//Поток воспроизведения песни
 	INT contour_red, contour_green, contour_blue;	//RGB смешивание контура
 	INT fill_red, fill_green, fill_blue;			//RGB смешивание заливки
+	FLOAT numVolume;								//значение громкости
 	/*
 		Контекстное меню
 	*/
@@ -29,12 +30,13 @@ private:
 	HMENU hColorContour;
 	HMENU hColorFill;
 	HMENU hTranperency;
+	HBRUSH black_brush;
+	HPEN red_pen;
 public:
 	Application(VOID);								//конструктор по умолчанию
 	~Application();									//деструктор
 	static Application* _this;						//собственный указатель
 	static INT_PTR CALLBACK DlgProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);				//Диалоговая процедура для диалогового окна
-	
 	VOID Cls_OnCommand(HWND hwnd, INT id, HWND hwndCtl, UINT codeNotify);								//WM_COMMAND
 	BOOL Cls_OnInitDialog(HWND hwnd, HWND hwndFocus, LPARAM lParam);									//WM_INITDIALOG
 	VOID Cls_OnHScroll(HWND hwnd, HWND hwndCtl, UINT code, INT pos);									//WM_HSCROLL

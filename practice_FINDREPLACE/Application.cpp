@@ -6,6 +6,9 @@ Application* Application::_this = NULL;
 */
 Application::Application(VOID)
 {	
+	/*
+		Инициализация стандартныъ элементов управления
+	*/
 	INITCOMMONCONTROLSEX icc;
 	icc.dwSize = sizeof(icc);
 	icc.dwICC = ICC_WIN95_CLASSES;
@@ -16,6 +19,7 @@ Application::Application(VOID)
 	id_timer = 0;						//ID timer by PlayingSongs
 	idTimerBySpectr = 1;				//ID timer by Spectrum
 	IsRepeatSong = FALSE;				//повтор песни
+	numVolume = 1.0;					//громкость
 }
 /*
 	Destructor
@@ -89,10 +93,11 @@ VOID Application::TransparencyWindow(HWND hWnd, INT value)
 */
 VOID Application::showTimePlaying(HWND hWnd, INT secPlaying)
 {
-	INT sec, min;
-	min = secPlaying / 60;
-	sec = secPlaying % 60;
+	INT sec, min;				//секунд, минут
+	min = secPlaying / 60;		//вычисление минут
+	sec = secPlaying % 60;		//вычисление секунд
 	std::wstringstream ss;
+
 	if (min < 10 && sec < 10)
 	{
 		ss << "0" << min << ":0" << sec;
@@ -109,7 +114,7 @@ VOID Application::showTimePlaying(HWND hWnd, INT secPlaying)
 	{
 		ss << min << ":" << sec;
 	}
-	SetWindowText(GetDlgItem(hWnd, IDC_OUTTIME), ss.str().c_str());
+	SetWindowText(GetDlgItem(hWnd, IDC_OUTTIME), ss.str().c_str());			//вывод времени в статик
 }
 /*
 	Запуск программы
@@ -170,16 +175,16 @@ BOOL Application::Cls_OnInitDialog(HWND hwnd, HWND hwndFocus, LPARAM lParam)
 	SetWindowText(hwnd, NAMEPLEER);
 	/*
 		Загрузка иконки приложения
-	*/	
+	*/
 	hIcon = LoadIcon(GetModuleHandle(0), MAKEINTRESOURCE(IDI_ICON1));
-	SendMessage(hwnd, WM_SETICON, 0, (LPARAM)hIcon);		
+	SendMessage(hwnd, WM_SETICON, 0, (LPARAM)hIcon);
 	/*
 		Слайдер громкости
 	*/
-	hTBSoundVolume = GetDlgItem(hwnd, IDC_TRACKBARSOUND); 
+	hTBSoundVolume = GetDlgItem(hwnd, IDC_TRACKBARSOUND);
 	SendMessage(hTBSoundVolume, TBM_SETPOS, TRUE, (LPARAM)100);
 	/*
-		Слайдер полосы перемотки 
+		Слайдер полосы перемотки
 	*/
 	hTBPlayingSong = GetDlgItem(hwnd, IDC_SLIDER_TIMEPLAYING);
 	/*
@@ -292,6 +297,7 @@ VOID Application::Cls_OnHScroll(HWND hwnd, HWND hwndCtl, UINT code, INT pos)
 		*/
 		SendMessage(hTBSoundVolume, TBM_SETPOS, TRUE, (LPARAM)p);
 		BASS_ChannelSetAttribute(hStream, BASS_ATTRIB_VOL, nPos);
+		numVolume = nPos;
 		/*
 			Привязка к windows регулятору громкости
 		*/
@@ -621,7 +627,7 @@ VOID Application::showNameSong(HSTREAM stream, HWND hWnd)
 	TAG_ID3* id3 = (TAG_ID3*)BASS_ChannelGetTags(stream, BASS_TAG_ID3);		//получение данных о песне
 	std::wstringstream infoAboutTheSong;									//Буфер строки (Название песни + Исполнитель + время)
 	infoSong info;			
-	TCHAR path[MAX_PATH];
+	TCHAR path[MAX_PATH];				//путь к файлу
 	for (int i = 0;i < playlist.songs.size();i++)
 	{
 		if (stream == playlist.songs[i].hStream)
@@ -702,8 +708,7 @@ VOID Application::Cls_OnTimer(HWND hwnd, UINT id)
 			showNameSong(hStream, hwnd);
 		secPlaying++;
 	}
-	else if (id == idTimerBySpectr)
-	{
+	else if (id == idTimerBySpectr) {
 		InvalidateRect(hwnd, &spectrRECT, TRUE);
 	}
 }
@@ -827,16 +832,14 @@ INT_PTR CALLBACK Application::DlgProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARA
 			}
 			break;
 		}
-		/*
-			Отрисовка спектра
-		*/
 		case WM_PAINT:
 		{
 			PAINTSTRUCT ps;
 			HDC hdc = BeginPaint(hWnd, &ps);
-			static RECT rect;
+
+			RECT rect;
 			GetClientRect(hWnd, &rect);
-			static INT height = rect.bottom / 2 - 10;
+			INT height = rect.bottom / 2 - 10;
 			/*
 				Initialization size rectangle by redraw spectrum
 			*/
@@ -847,42 +850,60 @@ INT_PTR CALLBACK Application::DlgProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARA
 			/*
 				Yellow pen
 			*/
-			HBRUSH black_brush = CreateSolidBrush
+			static int fred = 0 , fblue = 0, fgreen = 0;
+			if (fred != _this->fill_red ||
+				fgreen != _this->fill_green ||
+				fblue != _this->fill_blue)
+			{
+				_this->black_brush = CreateSolidBrush
 				(
-				RGB(_this->fill_red, 
-					_this->fill_green, 
-					_this->fill_blue)
+					RGB(_this->fill_red,
+						_this->fill_green,
+						_this->fill_blue)
 				);
+			}
+			fred = _this->fill_red;
+			fgreen = _this->fill_green;
+			fblue = _this->fill_blue;
 			/*
 				Red pen
 			*/
-			HPEN red_pen = CreatePen
-				(PS_SOLID, 1, 
-					RGB(_this->contour_red, 
+			static int cred = 0, cgreen = 0, cblue = 0;
+			if (cred != _this->contour_red ||
+				cblue != _this->contour_blue ||
+				cgreen != _this->contour_green)
+			{
+				_this->red_pen = CreatePen
+				(PS_SOLID, 1,
+					RGB(_this->contour_red,
 						_this->contour_green,
 						_this->contour_blue)
 				);
+			}
+			cred = _this->contour_red;
+			cblue = _this->contour_blue;
+			cgreen = _this->contour_green;
 			int x;
 			int y = height;
 			int offset = 35;
 			int columns = 77;			//count columns
-			int w = (rect.right - rect.left - 35) / columns ; // ширина столбика
+			int w = (rect.right - rect.left - 35) / columns; // ширина столбика
 			FLOAT buffer_peaks[128] = { height };
 			BASS_ChannelGetData(_this->hStream, buffer_peaks, BASS_DATA_FFT256);
 
 			for (int i = 0; i < columns;i++)
 			{
-				SelectPen(hdc, red_pen);
+				SelectPen(hdc, _this->red_pen);
 				x = rect.left + offset + w * i;
 				y = abs(buffer_peaks[i] * 400 * 3 - height);
 				if (y > height)
 					y = height;
-				SelectObject(hdc, black_brush);				
-				SelectPen(hdc, red_pen);
-				if(height - y > 1)
+				SelectObject(hdc, _this->black_brush);
+				SelectPen(hdc, _this->red_pen);
+				if (height - y > 1)
 					Rectangle(hdc, x, y, x + w, height);
 			}
-			
+
 			EndPaint(hWnd, &ps);
 			ReleaseDC(hWnd, hdc);
 			break;
@@ -915,6 +936,7 @@ VOID Application::play(HSTREAM stream)
 	BASS_Start();
 	BASS_ChannelPlay(stream, TRUE);
 	equalizer.SetFX(stream);
+	BASS_ChannelSetAttribute(stream, BASS_ATTRIB_VOL, numVolume);
 }
 /*
 	Pause
@@ -955,6 +977,7 @@ VOID Application::prev()
 		play(hStream);				//воспроизвести поток
 		SetTimer(GetParent(hTBPlayingSong), id_timer, 1000, 0);
 		SendMessage(playlist.hPlayList, LB_SETCURSEL, prev, 0);	//выделяет текущую песня в плейлисте
+		BASS_ChannelSetAttribute(hStream, BASS_ATTRIB_VOL, numVolume);
 	}
 }
 /*
@@ -988,6 +1011,7 @@ VOID Application::next()
 		play(hStream);								//воспроизвести поток
 		SetTimer(GetParent(hTBPlayingSong), id_timer, 1000, 0);	//Запуск таймера 
 		SendMessage(playlist.hPlayList, LB_SETCURSEL, next, 0);	//выделяет текущую песня в плейлисте
+		BASS_ChannelSetAttribute(hStream, BASS_ATTRIB_VOL, numVolume);
 	}
 }
 /*
@@ -1010,7 +1034,6 @@ VOID Application::UncheckedAllMenuItemContour()
 	CheckMenuItem(hColorContour, COLOR_CONTOUR_BLUE, MF_BYCOMMAND | MF_UNCHECKED);
 	CheckMenuItem(hColorContour, COLOR_CONTOUR_GREEN, MF_BYCOMMAND | MF_UNCHECKED);
 	CheckMenuItem(hColorContour, COLOR_CONTOUR_WHITE, MF_BYCOMMAND | MF_UNCHECKED);
-	InvalidateRect(GetParent(hTBPlayingSong), &spectrRECT, TRUE);
 }
 	//Заливка
 VOID Application::UncheckedAllMenuItemFill()
@@ -1020,7 +1043,7 @@ VOID Application::UncheckedAllMenuItemFill()
 	CheckMenuItem(hColorFill, COLOR_FILL_BLUE, MF_BYCOMMAND | MF_UNCHECKED);
 	CheckMenuItem(hColorFill, COLOR_FILL_GREEN, MF_BYCOMMAND | MF_UNCHECKED);
 	CheckMenuItem(hColorFill, COLOR_FILL_WHITE, MF_BYCOMMAND | MF_UNCHECKED);
-	InvalidateRect(GetParent(hTBPlayingSong), &spectrRECT, TRUE);
+
 }
 	//Прозрачность
 VOID Application::UncheckedAllMenuItemTransperency()

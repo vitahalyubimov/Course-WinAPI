@@ -98,6 +98,7 @@ VOID DlgPlayList::Cls_OnCommand(HWND hwnd, INT id, HWND hwndCtl, UINT codeNotify
 				BASS_ChannelPlay(Application::_this->hStream, TRUE);	//запуск канала
 				SetTimer(GetParent(hDlg), Application::_this->id_timer, 1000, 0);			//запуск таймера для времени проигрывания
 				SetTimer(GetParent(hDlg), Application::_this->idTimerBySpectr, 100, 0);		//запуск таймера для спектра
+				BASS_ChannelSetAttribute(Application::_this->hStream, BASS_ATTRIB_VOL, Application::_this->numVolume);
 			}
 			break;
 		}

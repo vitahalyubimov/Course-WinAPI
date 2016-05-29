@@ -8,11 +8,11 @@ private:
 	HWND hDlg;								//Дескриптор окна
 	BASS_DX8_PARAMEQ dx8_fx0_parameq;		//структура определяющая данные для эквалайзера
 	HFX fx[10];								//каналы изменения звучания			
-	HWND hSlidersEqualizer[10];			//массив дескрипторов слайдеров
+	HWND hSlidersEqualizer[10];				//массив дескрипторов слайдеров
 public:
 	static DlgEqualizer* _this;			//собственный указатель
-	DlgEqualizer();				//Конструктор
-	~DlgEqualizer();			//Деструктор
+	DlgEqualizer();						//Конструктор
+	~DlgEqualizer();					//Деструктор
 
 	static INT_PTR WINAPI DlgProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);			//Диалоговая процедура
 	VOID ShowEqualizer(INT isShow);						//Отображение эквалайзера
